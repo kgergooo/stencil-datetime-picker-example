@@ -1,13 +1,5 @@
 import moment from 'moment';
 
-export function format(first: string, middle: string, last: string): string {
-  return (
-    (first || '') +
-    (middle ? ` ${middle}` : '') +
-    (last ? ` ${last}` : '')
-  );
-}
-
 export function getDayListByMonth(date: Date): string[] {
   const response: string[] = [];
 
@@ -16,7 +8,7 @@ export function getDayListByMonth(date: Date): string[] {
 
   // First empty days of the week
   const dayOfWeek = moment(date).startOf('month').day();
-  for(let i = 0; i < dayOfWeek; i++) {
+  for(let i = 1; i < dayOfWeek; i++) {
     response.push(null);
   }
 
@@ -28,6 +20,10 @@ export function getDayListByMonth(date: Date): string[] {
   }
 
   return  response;
+}
+
+export function getTime(date: Date): string {
+  return moment(date).format('HH:mm');
 }
 
 export function getNextMonth(date: Date): Date {
@@ -47,7 +43,7 @@ export function getPreviousMonthName(date: Date): string {
 }
 
 export function getDayFromDate(date: string): string {
-  return  date ? moment(date).format('DD') : "";
+  return  date ? moment(new Date(date)).format('DD') : "";
 }
 
 export function isSameDate(first: Date, second: Date): boolean {
@@ -60,5 +56,9 @@ export function isSameDate(first: Date, second: Date): boolean {
 }
 
 export function getMonthNameFromDate(date: Date):string {
-  return  moment(date).format('YYYY MMMM');
+  return  moment(date).format('MMMM YYYY');
+}
+
+export function getShortDate(date: Date):string {
+  return  moment(date).format('YYYY-MM-D');
 }

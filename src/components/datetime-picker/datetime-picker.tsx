@@ -2,13 +2,13 @@ import { Component, Event, EventEmitter, Prop, State, Watch } from '@stencil/cor
 import moment from 'moment';
 import {
   getDayListByMonth,
-  getPreviousMonthName,
   isSameDate,
-  getNextMonthName,
   getDayFromDate,
   getMonthNameFromDate,
   getPreviousMonth,
-  getNextMonth
+  getNextMonth,
+  getShortDate,
+  getTime
 } from '../../utils/utils';
 
 @Component({
@@ -31,7 +31,9 @@ export class DateTimePicker {
     }
 
   @State() daysInMonth: string [];
-  public selectedMonth: Date;
+  @State() selectedTime: string = "12:00";
+
+  private selectedMonth: Date;
 
   private reloadCalendar(newDate: Date) {
     this.selectedMonth = moment(newDate).startOf('month').toDate();
@@ -55,42 +57,48 @@ export class DateTimePicker {
     }
   }
 
+  private onTimeChanged(ev) {
+    // On time selection, emit data change event
+    this.selectedDate = moment(getShortDate(this.selectedDate) + " " + ev.target.value).toDate();
+    this.onDateSelected.emit(this.selectedDate);
+  }
+
   componentWillLoad() {
     this.watchHandler(this.selectedDate);
   }
 
   render() {
     return (
-      <div class="container datepicker-wrapper">
-      {/* Selected day */}
-      <input value={moment(this.selectedDate).format("YYYY-MM-DD") }/>
-      {/* Header */}
-      <div class="calendar-wrapper">
-        <div class="header row mt-3">
-          <div class="col-3">
-            <span class="cursor-p" onClick={() => {this.onPreviousMonthClicked()}}>
-              {getPreviousMonthName(this.selectedMonth)}
-            </span>
-          </div>
-          <div class="col-6 text-center">
-            <b>{getMonthNameFromDate(this.selectedMonth)}</b>
-          </div>
-          <div class="col-3 text-right">
-            <span class="cursor-p" onClick={() => {this.onNextMonthClicked()}}>
-              {getNextMonthName(this.selectedMonth)}
-            </span>
-          </div>
+      <div class="picker-container">
+        <div class="input-container">
+            <input class="input-field" value={moment(this.selectedDate).format("YYYY-MM-DD") }/>
+            <input class="input-field" type="time" min="9:00" max="18:00" value={getTime(this.selectedDate)} onInput={(ev) => {this.onTimeChanged(ev)}}></input>
+        </div>
+        <div class="month">      
+          <ul>
+            <li class="prev cursor-p" onClick={() => {this.onPreviousMonthClicked()}}>&#10094;</li>
+            <li class="next cursor-p" onClick={() => {this.onNextMonthClicked()}}>&#10095;</li>
+            <li>{getMonthNameFromDate(this.selectedMonth)}</li>
+          </ul>
         </div>
 
-        {/* Days */}
-        <div class="row pb-2 pt-2 text-center calendar-days">
+        <ul class="weekdays">
+          <li>Mo</li>
+          <li>Tu</li>
+          <li>We</li>
+          <li>Th</li>
+          <li>Fr</li>
+          <li>Sa</li>
+          <li>Su</li>
+        </ul>
+
+        <ul class="days">  
           {this.daysInMonth.map((day) =>
-            <div class={'column col-1 ' + (day ? 'cursor-p ': '')} onClick={() => {this.onDaySelected(day)}}>
-              <span class={(isSameDate(this.selectedDate,new Date(day)) ? 'selected-day': '') + ' day'}>{getDayFromDate(day)}</span>
-            </div>
+            <li class={(day ? 'cursor-p': '')} onClick={() => {this.onDaySelected(day)}}>
+              <span class={(isSameDate(this.selectedDate,new Date(day)) ? 'active': '')}>{getDayFromDate(day)}</span>
+            </li>
           )}
-        </div>
-        </div>
+        </ul>
       </div>
     )
   }
