@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Stencil Component Starter</title>
+  <link href="/build/mycomponent.css" rel="stylesheet">
+  <script src="/build/mycomponent.js"></script>
+</head>
+<body>
+<datetime-picker></datetime-picker>
+
+<script>
+  // Property - Passing the selected date for calendar
+  const today = new Date();
+
+  var cmp = document.querySelector('datetime-picker');
+  cmp.selectedDate = today;
+
+  // On Date change event listener
+  window.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('onDateSelected', (evt) => {
+      // Event response
+      console.log(evt.detail);
+
+      // reflectToAttr = true
+      console.log("component", cmp.selectedDate)
+    });
+  });
+</script>
+</body>
+</html>
