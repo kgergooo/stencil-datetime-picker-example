@@ -22,7 +22,7 @@ export class DateTimePicker {
   @Prop({
     mutable: true,
     reflectToAttr: true
-  }) selectedDate: Date;
+  }) selectedDate: Date = new Date();
 
   // On property change reload calendar
   @Watch('selectedDate')
@@ -59,7 +59,7 @@ export class DateTimePicker {
 
   private onTimeChanged(ev) {
     // On time selection, emit data change event
-    this.selectedDate = moment(getShortDate(this.selectedDate) + " " + ev.target.value).toDate();
+    this.selectedDate = moment(new Date(getShortDate(this.selectedDate)) + " " + ev.target.value).toDate();
     this.onDateSelected.emit(this.selectedDate);
   }
 
